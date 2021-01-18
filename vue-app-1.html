@@ -139,7 +139,6 @@
                             const response = await axios.get(apiURL + 'random?category=' + this.categorieActive)
                             this.facts = response.data
                             this.IsArray = false
-                            console.log(this.facts)
                         } catch (error) {
                             console.log(error);
                         }
@@ -157,7 +156,6 @@
                             const response = await axios.get(apiURL + 'search?query=' + this.query)
                             this.facts = response.data.result
                             this.IsArray = true
-                            console.log(this.facts)
                         } catch (error) {
                             console.log(error);
                         }
