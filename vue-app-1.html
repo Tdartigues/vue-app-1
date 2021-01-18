@@ -89,14 +89,27 @@
     <body>
         <div id="main" class="container" v-cloak>
             <ul class="row">
-                <img src="https://assets.chucknorris.host/img/avatar/chuck-norris.png">
                 <nav v-for= "categorie in categories" >
                     <a href="#" v-on:click="makeActive(categorie)"> {{ categorie }} </a>
                 </nav>
             </ul>
-            <h1>Joke on you</h1>
-            <p> {{value}} </p>
+            <h1>Joke on you : </h1>
             <button v-on:click="fetchData()"> Nouvelle Joke </button>
+            <div>
+                <input type="text" v-model="query">
+                <button v-on:click="fetchDataFilter()" > GO </button>
+            </div>
+            <template v-if="IsArray">
+                <ul>
+                    <li v-for="fact in facts">
+                        <p> {{fact.value}} </p>
+                    </li>
+                </ul>
+            </template>
+            <template v-else>
+                <p> {{facts.value}} </p>
+            </template>
+
         </div>
 
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -108,9 +121,11 @@
             const demo = new Vue({
                 el: '#main',
                 data: {
-                    value : '',
+                    facts : '',
                     categories : [],
-                    categorieActive : 'dev'
+                    categorieActive : '',
+                    query : '',
+                    IsArray : false,
                 },
                 created: function () {
                     this.fetchCategories().then((response) => {
@@ -122,7 +137,9 @@
                     fetchData: async function () {
                         try {
                             const response = await axios.get(apiURL + 'random?category=' + this.categorieActive)
-                            this.value = response.data.value
+                            this.facts = response.data
+                            this.IsArray = false
+                            console.log(this.facts)
                         } catch (error) {
                             console.log(error);
                         }
@@ -131,6 +148,16 @@
                         try {
                             const response = await axios.get(apiURL + 'categories')
                             this.categories = response.data
+                        } catch (error) {
+                            console.log(error);
+                        }
+                    },
+                    fetchDataFilter: async function () {
+                        try {
+                            const response = await axios.get(apiURL + 'search?query=' + this.query)
+                            this.facts = response.data.result
+                            this.IsArray = true
+                            console.log(this.facts)
                         } catch (error) {
                             console.log(error);
                         }
